@@ -1,10 +1,13 @@
 import streamlit as st
 import pandas as pd
-from sklearn.preprocessing import MinMaxScaler
+from sklearn.preprocessing import StandardScaler
 import pickle
 
 # Load the trained model
 model = pickle.load(open('GradientBoosting.pkl', 'rb'))
+
+# Load the scaler model
+scaler = pickle.load(open('scaler.pkl', 'rb'))
 
 # Get user input for the columns
 st.title('World Happiness')
@@ -32,8 +35,11 @@ if predict_button:
         'Dystopia_Residual': [Dystopia_Residual]
     })
 
+    # Scale the input data
+    scaled_input = scaler.transform(input_data)
+
     # Perform the prediction
-    prediction = model.predict(input_data)
+    prediction = model.predict(scaled_input)
 
     # Display the predicted World Happiness Score
     st.subheader('World Happiness Score:')

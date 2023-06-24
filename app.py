@@ -1,17 +1,22 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[4]:
+# In[1]:
 
 
 import pickle
 import pandas as pd
 import gradio as gr
 import warnings
+from sklearn.preprocessing import StandardScaler
+
 warnings.filterwarnings('ignore')
 
 # Load the trained model
 model = pickle.load(open('GradientBoosting.pkl', 'rb'))
+
+# Load the scaler model
+scaler = pickle.load(open('scaler.pkl', 'rb'))
 
 def word_happiness(Standard_Error, Economy_GDP_per_Capita, Family, Freedom, Trust_Government_Corruption, Generosity, Dystopia_Residual):
     # Prepare the input data as a DataFrame
@@ -25,8 +30,11 @@ def word_happiness(Standard_Error, Economy_GDP_per_Capita, Family, Freedom, Trus
         'Dystopia_Residual': [Dystopia_Residual]
     })
 
+    # Scale the input data
+    scaled_data = scaler.transform(data)
+
     # Perform the prediction
-    prediction = model.predict(data)
+    prediction = model.predict(scaled_data)
     return prediction[0]
 
 # Create the input components
@@ -45,8 +53,8 @@ interface = gr.Interface(
     fn=word_happiness,
     inputs=input_components,
     outputs="number",
-    title="Word Happiness Report Project",
-    description="Word Happiness Report Project."
+    title="World Happiness Report Project",
+    description="World Happiness Report Project."
 )
 
 # Launch the interface
@@ -54,7 +62,4 @@ interface.launch()
 
 
 # In[ ]:
-
-
-
 
